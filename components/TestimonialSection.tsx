@@ -10,13 +10,39 @@ gsap.registerPlugin(ScrollTrigger);
 const testimonials = [
   {
     num: "01",
-    total: "8",
     name: "Emma Williams",
     role: "Interior Architect",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC3wMNGl8-z95LBh_Zoga0Lu7s2-oAAsqkvKALKm-dmvlHvOxp4GbxlC-91Xe-aWNFLUaKv72kNrNjkL55tae-AxzvJQCBMFPditM0KG7CNHRpIiiBD-0uLBfb5g53RuOToSPm3Y0Y6RAlsqW1l3nI4eoSFF_lDlE-7cGzIWQAA8aHSQ3B6zz6m4g2tZyTteT8byvNY-wTwfGdT20dgxfL4L9kePct3PzFVb0vPk3EcdcWSo5qQM1f25eDh9DQ-F_Kfk704hLDvQV1I",
     quote: '"Everything is absolutely perfect! From the material quality to the flawless fit every piece feels premium. This brand has completely transformed my client\'s penthouse experience."',
     rating: 5,
     reviews: "49 Reviews",
+  },
+  {
+    num: "02",
+    name: "James Thornton",
+    role: "Property Developer",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+    quote: '"MAISON pieces have become the signature of every project I develop. The craftsmanship is extraordinary — clients immediately notice the difference in quality and presence."',
+    rating: 5,
+    reviews: "31 Reviews",
+  },
+  {
+    num: "03",
+    name: "Sofia Marchetti",
+    role: "Luxury Home Stylist",
+    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&q=80",
+    quote: '"I\'ve sourced furniture from across Europe and nothing compares. The attention to detail, the materials, the packaging — every touchpoint feels intentional and refined."',
+    rating: 5,
+    reviews: "62 Reviews",
+  },
+  {
+    num: "04",
+    name: "Karim El Fassi",
+    role: "Boutique Hotel Owner",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
+    quote: '"We furnished our entire hotel with MAISON pieces. Guests constantly ask about the furniture — it\'s become part of our brand identity. An investment that pays for itself."',
+    rating: 5,
+    reviews: "18 Reviews",
   },
 ];
 
@@ -32,7 +58,7 @@ export function TestimonialSection() {
         scrollTrigger: { trigger: ".testi-left", start: "top 80%" },
       });
       gsap.from(".testi-quote", {
-        opacity: 0, y: 40, duration: 1, ease: "power3.out",
+        opacity: 0, y: 40, duration: 1, ease: "power3.out", clearProps: "opacity,transform",
         scrollTrigger: { trigger: ".testi-quote", start: "top 80%" },
       });
     },
@@ -51,7 +77,7 @@ export function TestimonialSection() {
             >
               {current.num}
             </span>
-            <span className="text-[18px] text-[#c4c7c7]">/ {current.total}</span>
+            <span className="text-[18px] text-[#c4c7c7]">/ {testimonials.length}</span>
           </div>
 
           <div className="space-y-2">

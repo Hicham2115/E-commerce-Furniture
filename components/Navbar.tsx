@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Search, ShoppingBag, User } from "lucide-react";
@@ -25,20 +24,11 @@ const mobileLinks = [
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, []);
 
   return (
     <nav
-      className={`fixed top-0 z-50 w-full flex items-center justify-between px-5 md:px-16 py-4 border-b border-[#c4c7c7]/30 transition-all duration-500 ${
-        scrolled ? "bg-[#fdf8f8]/95 shadow-sm backdrop-blur-sm" : "bg-transparent"
-      }`}
+      className="fixed top-0 z-50 w-full flex items-center justify-between px-5 md:px-16 py-4 border-b border-[#c4c7c7]/30 bg-[#fdf8f8]/80 backdrop-blur-md shadow-sm"
     >
       {/* Left — hamburger (mobile) + desktop nav links */}
       <div className="flex items-center gap-6">

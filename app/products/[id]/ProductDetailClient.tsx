@@ -218,10 +218,10 @@ export function ProductDetailClient({ id }: { id: string }) {
                 className="text-[40px] font-medium leading-none tracking-tight text-[#1c1b1b]"
                 style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
               >
-                ${product.price.toFixed(2)}
+                DH {(product.price * 10).toFixed(0)}
               </span>
               <span className="mb-1 text-[13px] text-[#744748] line-through opacity-40">
-                ${(product.price * 1.25).toFixed(2)}
+                DH {(product.price * 12.5).toFixed(0)}
               </span>
               <span className="mb-1 rounded-full bg-[#fedb9b] px-2.5 py-0.5 text-[10px] font-medium tracking-wider text-[#745a27]">
                 20% OFF
@@ -365,7 +365,7 @@ export function ProductDetailClient({ id }: { id: string }) {
                   >
                     {p.title}
                   </p>
-                  <p className="text-[14px] font-medium text-[#1c1b1b]">${p.price.toFixed(2)}</p>
+                  <p className="text-[14px] font-medium text-[#1c1b1b]">DH {(p.price * 10).toFixed(0)}</p>
                 </div>
               </Link>
             ))}

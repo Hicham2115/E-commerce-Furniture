@@ -77,19 +77,28 @@ export function ProductsClient() {
       return 0;
     });
 
+  // Hero animation — runs once on mount only
   useGSAP(
     () => {
       gsap.from(".page-hero > *", {
         opacity: 0, y: 30, duration: 0.9, ease: "power3.out", stagger: 0.1, delay: 0.2,
+        clearProps: "opacity,transform",
       });
-      if (filtered) {
-        ScrollTrigger.refresh();
-        gsap.set(".prod-card", { opacity: 0, y: 30 });
-        gsap.to(".prod-card", {
-          opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.06,
-          scrollTrigger: { trigger: ".prod-grid", start: "top 85%" },
-        });
-      }
+    },
+    { scope: container }
+  );
+
+  // Grid animation — reruns when filter / sort changes
+  useGSAP(
+    () => {
+      if (!filtered) return;
+      ScrollTrigger.refresh();
+      gsap.set(".prod-card", { opacity: 0, y: 30 });
+      gsap.to(".prod-card", {
+        opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.06,
+        clearProps: "opacity,transform",
+        scrollTrigger: { trigger: ".prod-grid", start: "top 85%" },
+      });
     },
     { scope: container, dependencies: [filtered?.length, activeCategory, sortBy] }
   );
@@ -217,7 +226,7 @@ export function ProductsClient() {
                   </h3>
                   <div className="mt-1 flex items-center justify-between">
                     <span className="text-[15px] font-medium text-[#1c1b1b]">
-                      ${product.price.toFixed(2)}
+                      DH {(product.price * 10).toFixed(0)}
                     </span>
                     <span className="text-[11px] text-[#444748]">
                       ★ {product.rating.rate}

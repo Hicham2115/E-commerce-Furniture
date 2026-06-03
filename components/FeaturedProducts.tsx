@@ -17,7 +17,7 @@ const productOverrides = [
   {
     name: "Velour Sofa Case",
     tag: "©International - going distance 2026",
-    price: "$120",
+    price: "1,200 DH",
     // badge: "[New Arrival]",
     clipClass: "clip-poly-1",
     image:
@@ -27,7 +27,7 @@ const productOverrides = [
   {
     name: "Lounge Armchair",
     tag: "©International - just do it 2026",
-    price: "(45%)",
+    price: "45DH",
     // badge: null,
     clipClass: "clip-poly-2",
     image:
@@ -37,7 +37,7 @@ const productOverrides = [
   {
     name: "Marble Center Table",
     tag: "©Maison - signature series 2026",
-    price: "$840",
+    price: "8,400 DH",
     // badge: null,
     clipClass: "clip-poly-asym",
     image:
@@ -98,6 +98,7 @@ export function FeaturedProducts() {
           duration: 1.5,
           ease: "expo.out",
           stagger: 0.3,
+          clearProps: "clip-path",
           scrollTrigger: { trigger: ".fp-grid", start: "top 80%" },
         });
       }

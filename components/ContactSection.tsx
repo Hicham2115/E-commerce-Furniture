@@ -35,7 +35,7 @@ export function ContactSection() {
         opacity: 0,
         y: 30,
         duration: 0.7,
-        ease: "power3.out",
+        ease: "power3.out", clearProps: "opacity,transform",
         stagger: 0.1,
         scrollTrigger: { trigger: ".ct-info-card", start: "top 85%" },
       });
@@ -43,7 +43,7 @@ export function ContactSection() {
         opacity: 0,
         y: 24,
         duration: 0.7,
-        ease: "power3.out",
+        ease: "power3.out", clearProps: "opacity,transform",
         stagger: 0.08,
         scrollTrigger: { trigger: ".ct-form", start: "top 85%" },
       });
