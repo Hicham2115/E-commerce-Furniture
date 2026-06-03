@@ -8,6 +8,7 @@ import { FeaturedProducts } from "@/components/FeaturedProducts";
 import { CategoriesSection } from "@/components/CategoriesSection";
 import { CarouselSection } from "@/components/CarouselSection";
 import { TestimonialSection } from "@/components/TestimonialSection";
+import { ContactSection } from "@/components/ContactSection";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export default function HomePage() {
@@ -25,6 +26,7 @@ export default function HomePage() {
           <CategoriesSection />
           <CarouselSection />
           <TestimonialSection />
+          <ContactSection />
         </main>
         <SiteFooter />
       </div>
