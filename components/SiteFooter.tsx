@@ -46,7 +46,7 @@ export function SiteFooter() {
   }
 
   return (
-    <footer className="bg-[#0A0A0A] text-[#f4f0ef] px-5 md:px-16 py-40">
+    <footer className="bg-[#0A0A0A] text-[#f4f0ef] px-5 md:px-16 py-30">
       {/* Top section */}
       <div className="grid grid-cols-4 md:grid-cols-12 gap-6 mb-24">
         {/* Brand + newsletter */}
