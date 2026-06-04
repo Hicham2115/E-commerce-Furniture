@@ -26,7 +26,7 @@ export default function HomePage() {
           <CategoriesSection />
           <CarouselSection />
           <TestimonialSection />
-          <ContactSection />
+          {/* <ContactSection /> */}
         </main>
         <SiteFooter />
       </div>
