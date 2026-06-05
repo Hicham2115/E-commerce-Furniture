@@ -116,7 +116,7 @@ export function ProductsClient() {
 
       {/* Filter bar */}
       <div className="sticky top-16 z-40 flex flex-wrap items-center justify-between gap-4 border-b border-[#c4c7c7]/40 bg-[#fdf8f8]/95 px-5 py-4 backdrop-blur-sm md:px-16">
-        <div className="flex items-center gap-1 overflow-x-auto">
+        <div className="cat-scroll flex items-center gap-1 overflow-x-auto pb-2">
           <SlidersHorizontal aria-hidden="true" className="mr-3 h-4 w-4 shrink-0 text-[#444748]" />
           {categories.map((cat) => (
             <button
