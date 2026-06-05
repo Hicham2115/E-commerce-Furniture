@@ -16,12 +16,15 @@ export function MarqueeBar() {
         {repeated.map((item, i) => (
           <span key={i} className="inline-flex items-center gap-8">
             <span
-              className="text-[28px] md:text-[32px] tracking-widest text-[#1c1b1b]"
-              style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+              className="text-[20px] md:text-[24px] tracking-widest text-[#1c1b1b]"
+              style={{
+                fontFamily:
+                  "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
+              }}
             >
               {item}
             </span>
-            <span className="text-[#745a27] text-lg">✦</span>
+            <span className="text-[#745a27] text-lg mr-4">✦</span>
           </span>
         ))}
       </div>

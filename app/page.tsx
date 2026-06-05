@@ -22,15 +22,19 @@ export default function HomePage() {
         <main>
           <HeroSection />
           <MarqueeBar />
-          <FeaturedProducts />
+
+          <div id="about">
+            <FeaturedProducts />
+          </div>
           <CategoriesSection />
           <CarouselSection />
           <TestimonialSection />
           {/* <ContactSection /> */}
         </main>
-        <SiteFooter />
+        <div id="contact">
+          <SiteFooter />
+        </div>
       </div>
     </>
   );
 }
-

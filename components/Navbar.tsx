@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Search, ShoppingBag, User } from "lucide-react";
+import { Heart, Menu, Search, ShoppingBag, User } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useCartStore } from "@/lib/cartStore";
 
 const desktopLinks = [
   { href: "/products", label: "Products" },
@@ -18,24 +19,24 @@ const mobileLinks = [
   { href: "/products", label: "Products" },
   { href: "/#about", label: "About Us" },
   { href: "/#contact", label: "Contact Us" },
-  { href: "#", label: "Living Room" },
-  { href: "#", label: "Bedroom" },
-  { href: "#", label: "Dining" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { cart, toggleCart } = useCartStore();
+  const cartCount = cart?.totalQuantity ?? 0;
 
   return (
-    <nav
-      className="fixed top-0 z-50 w-full flex items-center justify-between px-5 md:px-16 py-4 border-b border-[#c4c7c7]/30 bg-[#fdf8f8]/80 backdrop-blur-md shadow-sm"
-    >
+    <nav className="fixed top-0 z-50 w-full flex items-center justify-between px-5 md:px-16 py-4 border-b border-[#c4c7c7]/30 bg-[#fdf8f8]/80 backdrop-blur-md shadow-sm">
       {/* Left — hamburger (mobile) + desktop nav links */}
       <div className="flex items-center gap-6">
         {/* Mobile hamburger */}
         <Popover>
           <PopoverTrigger asChild>
-            <button aria-label="Open menu" className="p-2 hover:opacity-60 transition-opacity md:hidden">
+            <button
+              aria-label="Open menu"
+              className="p-2 hover:opacity-60 transition-opacity md:hidden"
+            >
               <Menu aria-hidden="true" className="h-5 w-5 text-[#1c1b1b]" />
             </button>
           </PopoverTrigger>
@@ -84,21 +85,38 @@ export default function Navbar() {
       <Link
         href="/"
         className="absolute left-1/2 -translate-x-1/2 text-[22px] md:text-[28px] font-semibold tracking-[-0.02em] text-[#1c1b1b] hover:opacity-70 transition-opacity"
-        style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+        style={{
+          fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
+        }}
       >
         MAISON
       </Link>
 
       {/* Right — icons */}
       <div className="flex items-center gap-1 md:gap-3">
-        <button aria-label="Search" className="p-2 hover:opacity-60 transition-opacity">
+        <button
+          aria-label="Search"
+          className="p-2 hover:opacity-60 transition-opacity"
+        >
           <Search aria-hidden="true" className="h-4 w-4 text-[#1c1b1b]" />
         </button>
-        <button aria-label="Cart" className="p-2 hover:opacity-60 transition-opacity">
+        <button
+          aria-label="Open cart"
+          onClick={toggleCart}
+          className="relative p-2 hover:opacity-60 transition-opacity"
+        >
           <ShoppingBag aria-hidden="true" className="h-4 w-4 text-[#1c1b1b]" />
+          {cartCount > 0 && (
+            <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#1c1b1b] text-[9px] font-bold text-white">
+              {cartCount}
+            </span>
+          )}
         </button>
-        <button aria-label="Account" className="p-2 hover:opacity-60 transition-opacity">
-          <User aria-hidden="true" className="h-4 w-4 text-[#1c1b1b]" />
+        <button
+          aria-label="Account"
+          className="p-2 hover:opacity-60 transition-opacity"
+        >
+          <Heart aria-hidden="true" className="h-4 w-4 text-[#1c1b1b]" />
         </button>
       </div>
     </nav>

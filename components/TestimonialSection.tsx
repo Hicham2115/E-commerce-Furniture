@@ -12,8 +12,10 @@ const testimonials = [
     num: "01",
     name: "Emma Williams",
     role: "Interior Architect",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC3wMNGl8-z95LBh_Zoga0Lu7s2-oAAsqkvKALKm-dmvlHvOxp4GbxlC-91Xe-aWNFLUaKv72kNrNjkL55tae-AxzvJQCBMFPditM0KG7CNHRpIiiBD-0uLBfb5g53RuOToSPm3Y0Y6RAlsqW1l3nI4eoSFF_lDlE-7cGzIWQAA8aHSQ3B6zz6m4g2tZyTteT8byvNY-wTwfGdT20dgxfL4L9kePct3PzFVb0vPk3EcdcWSo5qQM1f25eDh9DQ-F_Kfk704hLDvQV1I",
-    quote: '"Everything is absolutely perfect! From the material quality to the flawless fit every piece feels premium. This brand has completely transformed my client\'s penthouse experience."',
+    image:
+      "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=80",
+    quote:
+      '"Everything is absolutely perfect! From the material quality to the flawless fit every piece feels premium. This brand has completely transformed my client\'s penthouse experience."',
     rating: 5,
     reviews: "49 Reviews",
   },
@@ -21,8 +23,10 @@ const testimonials = [
     num: "02",
     name: "James Thornton",
     role: "Property Developer",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
-    quote: '"MAISON pieces have become the signature of every project I develop. The craftsmanship is extraordinary — clients immediately notice the difference in quality and presence."',
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80",
+    quote:
+      '"MAISON pieces have become the signature of every project I develop. The craftsmanship is extraordinary — clients immediately notice the difference in quality and presence."',
     rating: 5,
     reviews: "31 Reviews",
   },
@@ -30,8 +34,10 @@ const testimonials = [
     num: "03",
     name: "Sofia Marchetti",
     role: "Luxury Home Stylist",
-    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&q=80",
-    quote: '"I\'ve sourced furniture from across Europe and nothing compares. The attention to detail, the materials, the packaging — every touchpoint feels intentional and refined."',
+    image:
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&q=80",
+    quote:
+      '"I\'ve sourced furniture from across Europe and nothing compares. The attention to detail, the materials, the packaging — every touchpoint feels intentional and refined."',
     rating: 5,
     reviews: "62 Reviews",
   },
@@ -39,8 +45,10 @@ const testimonials = [
     num: "04",
     name: "Karim El Fassi",
     role: "Boutique Hotel Owner",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
-    quote: '"We furnished our entire hotel with MAISON pieces. Guests constantly ask about the furniture — it\'s become part of our brand identity. An investment that pays for itself."',
+    image:
+      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
+    quote:
+      '"We furnished our entire hotel with MAISON pieces. Guests constantly ask about the furniture — it\'s become part of our brand identity. An investment that pays for itself."',
     rating: 5,
     reviews: "18 Reviews",
   },
@@ -54,36 +62,52 @@ export function TestimonialSection() {
   useGSAP(
     () => {
       gsap.from(".testi-left > *", {
-        opacity: 0, y: 30, duration: 0.8, ease: "power3.out", stagger: 0.12,
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        ease: "power3.out",
+        stagger: 0.12,
         scrollTrigger: { trigger: ".testi-left", start: "top 80%" },
       });
       gsap.from(".testi-quote", {
-        opacity: 0, y: 40, duration: 1, ease: "power3.out", clearProps: "opacity,transform",
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        ease: "power3.out",
+        clearProps: "opacity,transform",
         scrollTrigger: { trigger: ".testi-quote", start: "top 80%" },
       });
     },
-    { scope: container }
+    { scope: container },
   );
 
   return (
-    <section ref={container} className="py-40 px-5 md:px-16 bg-[#F5F4F0]">
+    <section ref={container} className="py-40 px-5 md:px-16 bg-[#f5f2f0]">
       <div className="grid grid-cols-12 gap-6 items-start">
         {/* Left col */}
         <div className="testi-left col-span-12 md:col-span-4 space-y-12">
           <div className="flex items-baseline gap-2">
             <span
               className="text-[48px] font-medium"
-              style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+              style={{
+                fontFamily:
+                  "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
+              }}
             >
               {current.num}
             </span>
-            <span className="text-[18px] text-[#c4c7c7]">/ {testimonials.length}</span>
+            <span className="text-[18px] text-[#c4c7c7]">
+              / {testimonials.length}
+            </span>
           </div>
 
           <div className="space-y-2">
             <h5
               className="text-[32px] font-medium"
-              style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+              style={{
+                fontFamily:
+                  "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
+              }}
             >
               [{current.name}]
             </h5>
@@ -129,7 +153,10 @@ export function TestimonialSection() {
           <div className="space-y-8">
             <h2
               className="text-[32px] md:text-[48px] leading-[1.1] font-medium text-[#1c1b1b]"
-              style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+              style={{
+                fontFamily:
+                  "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
+              }}
             >
               {current.quote}
             </h2>
@@ -137,7 +164,11 @@ export function TestimonialSection() {
             <div className="flex items-center gap-6">
               <div className="flex text-[#e4c285]">
                 {Array.from({ length: current.rating }).map((_, i) => (
-                  <Star key={i} aria-hidden="true" className="h-5 w-5 fill-[#e4c285]" />
+                  <Star
+                    key={i}
+                    aria-hidden="true"
+                    className="h-5 w-5 fill-[#e4c285]"
+                  />
                 ))}
               </div>
               <span className="text-[12px] tracking-wider">
@@ -150,7 +181,9 @@ export function TestimonialSection() {
             <span className="text-[11px] tracking-wider text-[#444748]">
               See What Our Customers Are Saying
             </span>
-            <span className="text-[40px] leading-none opacity-20 select-none">"</span>
+            <span className="text-[40px] leading-none opacity-20 select-none">
+              "
+            </span>
           </div>
         </div>
       </div>

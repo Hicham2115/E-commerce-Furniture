@@ -3,6 +3,8 @@ import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Providers } from "./providers";
+import { CartDrawer } from "@/components/CartDrawer";
+import { Toaster } from "@/components/ui/sonner";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -31,7 +33,11 @@ export default function RootLayout({
     <html lang="en" className={`${plusJakarta.variable} ${dmSans.variable} scroll-smooth h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-[#fdf8f8] text-[#1c1b1b] overflow-x-hidden">
         <TooltipProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            {children}
+            <CartDrawer />
+            <Toaster position="bottom-right" richColors />
+          </Providers>
         </TooltipProvider>
       </body>
     </html>
