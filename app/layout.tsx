@@ -4,6 +4,7 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Providers } from "./providers";
 import { CartDrawer } from "@/components/CartDrawer";
+import { WishlistDrawer } from "@/components/WishlistDrawer";
 import { Toaster } from "@/components/ui/sonner";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -36,6 +37,7 @@ export default function RootLayout({
           <Providers>
             {children}
             <CartDrawer />
+            <WishlistDrawer />
             <Toaster position="bottom-right" richColors />
           </Providers>
         </TooltipProvider>

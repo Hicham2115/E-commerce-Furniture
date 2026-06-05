@@ -4,11 +4,34 @@ import { X, ShoppingBag, Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import { useCartStore } from "@/lib/cartStore";
-import { shopifyFetch, ADD_CART_LINES, CREATE_CART, type ShopifyCreateCartResponse, type ShopifyAddCartLinesResponse } from "@/lib/shopify";
+import { shopifyFetch, ADD_CART_LINES, CREATE_CART, REMOVE_CART_LINES, type ShopifyCreateCartResponse, type ShopifyAddCartLinesResponse, type ShopifyRemoveCartLinesResponse } from "@/lib/shopify";
 import { getFirstVariantId, type ShopifyProduct } from "@/lib/types";
 
 export function CartDrawer() {
-  const { cart, isOpen, closeCart } = useCartStore();
+  const { cart, isOpen, closeCart, setCart } = useCartStore();
+  const cartId = useCartStore((s) => s.cartId);
+
+  const removeFromCart = useMutation({
+    mutationFn: (lineId: string) =>
+      shopifyFetch<ShopifyRemoveCartLinesResponse>(REMOVE_CART_LINES, {
+        cartId,
+        lineIds: [lineId],
+      }),
+    onSuccess: (res) => {
+      if (res.cartLinesRemove.userErrors.length > 0) {
+        toast.error(res.cartLinesRemove.userErrors[0].message);
+        return;
+      }
+      setCart(res.cartLinesRemove.cart);
+      toast.success("Removed from bag");
+    },
+    onError: (err) => {
+      const msg = axios.isAxiosError(err)
+        ? (err.response?.data?.errors?.[0]?.message ?? err.message)
+        : (err as Error).message;
+      toast.error("Could not remove item", { description: msg });
+    },
+  });
 
   const lines = cart?.lines.edges.map((e) => e.node) ?? [];
   const total = cart?.cost.totalAmount;
@@ -76,16 +99,26 @@ export function CartDrawer() {
                   />
                 </div>
                 <div className="flex flex-1 flex-col justify-between">
-                  <div>
-                    <p
-                      className="text-[14px] font-medium text-[#1c1b1b] line-clamp-1"
-                      style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p
+                        className="text-[14px] font-medium text-[#1c1b1b] line-clamp-1"
+                        style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+                      >
+                        {line.merchandise.product.title}
+                      </p>
+                      {line.merchandise.title !== "Default Title" && (
+                        <p className="mt-0.5 text-[11px] text-[#444748]">{line.merchandise.title}</p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => removeFromCart.mutate(line.id)}
+                      disabled={removeFromCart.isPending}
+                      aria-label="Remove item"
+                      className="shrink-0 p-1 hover:opacity-60 transition-opacity disabled:opacity-30"
                     >
-                      {line.merchandise.product.title}
-                    </p>
-                    {line.merchandise.title !== "Default Title" && (
-                      <p className="mt-0.5 text-[11px] text-[#444748]">{line.merchandise.title}</p>
-                    )}
+                      <X aria-hidden="true" className="h-3.5 w-3.5 text-[#444748]" />
+                    </button>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[13px] text-[#444748]">Qty: {line.quantity}</span>

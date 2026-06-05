@@ -150,6 +150,35 @@ export const ADD_CART_LINES = `
   }
 `;
 
+export const REMOVE_CART_LINES = `
+  mutation RemoveCartLines($cartId: ID!, $lineIds: [ID!]!) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+      cart {
+        id
+        checkoutUrl
+        totalQuantity
+        cost { totalAmount { amount currencyCode } }
+        lines(first: 20) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id title
+                  price { amount currencyCode }
+                  product { title handle images(first:1){ edges{ node{ url } } } }
+                }
+              }
+            }
+          }
+        }
+      }
+      userErrors { field message }
+    }
+  }
+`;
+
 export const GET_CART = `
   query GetCart($cartId: ID!) {
     cart(id: $cartId) {
@@ -196,4 +225,8 @@ export interface ShopifyAddCartLinesResponse {
 
 export interface ShopifyGetCartResponse {
   cart: import("./types").ShopifyCart | null;
+}
+
+export interface ShopifyRemoveCartLinesResponse {
+  cartLinesRemove: { cart: import("./types").ShopifyCart; userErrors: { field: string; message: string }[] };
 }

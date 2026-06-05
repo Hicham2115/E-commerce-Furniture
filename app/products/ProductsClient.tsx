@@ -14,6 +14,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { shopifyFetch, GET_PRODUCTS, type ShopifyProductsResponse } from "@/lib/shopify";
 import { queryKeys } from "@/lib/queryKeys";
 import { getProductPrice, getProductImage, type ShopifyProduct } from "@/lib/types";
+import { useWishlistStore } from "@/lib/wishlistStore";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,7 +37,7 @@ export function ProductsClient() {
   const container = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">("default");
-  const [wishlist, setWishlist] = useState<string[]>([]);
+  const { toggle: toggleWishlist, has: inWishlist } = useWishlistStore();
 
   const { data, isLoading, isError, error, refetch } = useQuery<ShopifyProductsResponse>({
     queryKey: queryKeys.products.all,
@@ -161,7 +162,7 @@ export function ProductsClient() {
           {isLoading && Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
 
           {filtered.map((product, i) => {
-            const inWishlist = wishlist.includes(product.id);
+            const wishlisted = inWishlist(product.id);
             const image = getProductImage(product) || "";
             const price = getProductPrice(product);
 
@@ -186,15 +187,14 @@ export function ProductsClient() {
                     aria-label="Toggle wishlist"
                     onClick={(e) => {
                       e.preventDefault();
-                      setWishlist((w) =>
-                        w.includes(product.id) ? w.filter((id) => id !== product.id) : [...w, product.id]
-                      );
+                      toggleWishlist(product);
+                      toast.success(inWishlist(product.id) ? "Removed from wishlist" : "Added to wishlist");
                     }}
                     className="absolute right-4 top-4 flex h-8 w-8 cursor-pointer items-center justify-center bg-white/80 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100"
                   >
                     <Heart
                       aria-hidden="true"
-                      className={`h-4 w-4 transition-colors ${inWishlist ? "fill-[#e4c285] text-[#e4c285]" : "text-[#1c1b1b]"}`}
+                      className={`h-4 w-4 transition-colors ${wishlisted ? "fill-[#e4c285] text-[#e4c285]" : "text-[#1c1b1b]"}`}
                     />
                   </button>
                 </div>

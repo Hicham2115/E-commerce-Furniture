@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useCartStore } from "@/lib/cartStore";
+import { useWishlistStore } from "@/lib/wishlistStore";
 
 const desktopLinks = [
   { href: "/products", label: "Products" },
@@ -25,6 +26,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const { cart, toggleCart } = useCartStore();
   const cartCount = cart?.totalQuantity ?? 0;
+  const { items: wishlistItems, open: openWishlist } = useWishlistStore();
+  const wishlistCount = wishlistItems.length;
 
   return (
     <nav className="fixed top-0 z-50 w-full flex items-center justify-between px-5 md:px-16 py-4 border-b border-[#c4c7c7]/30 bg-[#fdf8f8]/80 backdrop-blur-md shadow-sm">
@@ -113,9 +116,15 @@ export default function Navbar() {
           )}
         </button>
         <button
-          aria-label="Account"
-          className="p-2 hover:opacity-60 transition-opacity"
+          aria-label="Open wishlist"
+          onClick={openWishlist}
+          className="relative p-2 hover:opacity-60 transition-opacity"
         >
+          {wishlistCount > 0 && (
+            <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#e4c285] text-[9px] font-bold text-[#1c1b1b]">
+              {wishlistCount}
+            </span>
+          )}
           <Heart aria-hidden="true" className="h-4 w-4 text-[#1c1b1b]" />
         </button>
       </div>

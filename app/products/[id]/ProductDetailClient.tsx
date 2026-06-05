@@ -16,6 +16,7 @@ import { shopifyFetch, GET_PRODUCT_BY_HANDLE, GET_PRODUCTS, type ShopifyProductR
 import { queryKeys } from "@/lib/queryKeys";
 import { getProductPrice, getFirstVariantId, type ShopifyVariant } from "@/lib/types";
 import { useAddToCart } from "@/components/CartDrawer";
+import { useWishlistStore } from "@/lib/wishlistStore";
 
 const GALLERY_CLIPS = ["clip-poly-1", "clip-poly-asym", "clip-poly-2", "clip-poly-1"];
 const MATERIALS = ["Solid Oak", "Bouclé Fabric", "Brass Accents", "Foam Core"];
@@ -46,7 +47,7 @@ export function ProductDetailClient({ id: handle }: { id: string }) {
   const container = useRef<HTMLDivElement>(null);
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
-  const [inWishlist, setInWishlist] = useState(false);
+  const { toggle: toggleWishlist, has: inWishlistFn } = useWishlistStore();
   const [selectedVariant, setSelectedVariant] = useState<ShopifyVariant | null>(null);
 
   const addToCart = useAddToCart();
@@ -269,13 +270,17 @@ export function ProductDetailClient({ id: handle }: { id: string }) {
                 {addToCart.isPending ? "Adding…" : "Add to Bag"}
               </button>
               <button
-                onClick={() => setInWishlist((w) => !w)}
+                onClick={() => {
+                  if (!product) return;
+                  toast.success(inWishlistFn(product.id) ? "Removed from wishlist" : "Added to wishlist");
+                  toggleWishlist(product);
+                }}
                 aria-label="Toggle wishlist"
                 className={`flex h-14 w-14 cursor-pointer shrink-0 items-center justify-center border transition-colors ${
-                  inWishlist ? "border-[#e4c285] bg-[#fedb9b]/20" : "border-[#c4c7c7]/60 hover:border-[#1c1b1b]"
+                  inWishlistFn(product?.id ?? "") ? "border-[#e4c285] bg-[#fedb9b]/20" : "border-[#c4c7c7]/60 hover:border-[#1c1b1b]"
                 }`}
               >
-                <Heart aria-hidden="true" className={`h-4 w-4 transition-colors ${inWishlist ? "fill-[#e4c285] text-[#e4c285]" : "text-[#1c1b1b]"}`} />
+                <Heart aria-hidden="true" className={`h-4 w-4 transition-colors ${inWishlistFn(product?.id ?? "") ? "fill-[#e4c285] text-[#e4c285]" : "text-[#1c1b1b]"}`} />
               </button>
             </div>
 
