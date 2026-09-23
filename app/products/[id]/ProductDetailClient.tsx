@@ -1,85 +1,31 @@
 "use client";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useRef, useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import {
   ArrowLeft, Heart, Minus, Plus, ChevronRight, ShoppingBag,
 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/Navbar";
 import { SiteFooter } from "@/components/SiteFooter";
-import { shopifyFetch, GET_PRODUCT_BY_HANDLE, GET_PRODUCTS, type ShopifyProductResponse, type ShopifyProductsResponse } from "@/lib/shopify";
-import { queryKeys } from "@/lib/queryKeys";
-import { getProductPrice, getFirstVariantId, type ShopifyVariant } from "@/lib/types";
-import { useAddToCart } from "@/components/CartDrawer";
+import { getMockProduct, mockProducts } from "@/lib/mockProducts";
+import { getProductPrice } from "@/lib/types";
 import { useWishlistStore } from "@/lib/wishlistStore";
 
 const GALLERY_CLIPS = ["clip-poly-1", "clip-poly-asym", "clip-poly-2", "clip-poly-1"];
 const MATERIALS = ["Solid Oak", "Bouclé Fabric", "Brass Accents", "Foam Core"];
-
-function DetailSkeleton() {
-  return (
-    <div className="grid grid-cols-1 gap-12 px-5 py-16 md:grid-cols-12 md:px-16">
-      <div className="md:col-span-7 space-y-4">
-        <Skeleton className="aspect-3/4 w-full rounded-none bg-[#e5e2e1]" />
-        <div className="grid grid-cols-4 gap-3">
-          {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="aspect-square w-full rounded-none bg-[#e5e2e1]" />
-          ))}
-        </div>
-      </div>
-      <div className="md:col-span-5 space-y-6 pt-4">
-        <Skeleton className="h-4 w-1/3 bg-[#e5e2e1]" />
-        <Skeleton className="h-10 w-3/4 bg-[#e5e2e1]" />
-        <Skeleton className="h-8 w-1/4 bg-[#e5e2e1]" />
-        <Skeleton className="h-24 w-full bg-[#e5e2e1]" />
-        <Skeleton className="h-14 w-full bg-[#e5e2e1]" />
-      </div>
-    </div>
-  );
-}
 
 export function ProductDetailClient({ id: handle }: { id: string }) {
   const container = useRef<HTMLDivElement>(null);
   const [qty, setQty] = useState(1);
   const [activeImg, setActiveImg] = useState(0);
   const { toggle: toggleWishlist, has: inWishlistFn } = useWishlistStore();
-  const [selectedVariant, setSelectedVariant] = useState<ShopifyVariant | null>(null);
-
-  const addToCart = useAddToCart();
-
-  const { data, isLoading, isError, error } = useQuery<ShopifyProductResponse>({
-    queryKey: queryKeys.products.detail(handle),
-    queryFn: () => shopifyFetch<ShopifyProductResponse>(GET_PRODUCT_BY_HANDLE, { handle }),
-  });
-
-  const { data: relatedData } = useQuery<ShopifyProductsResponse>({
-    queryKey: [...queryKeys.products.list(4), "related"],
-    queryFn: () => shopifyFetch<ShopifyProductsResponse>(GET_PRODUCTS, { first: 4 }),
-    enabled: !!data?.product,
-  });
-
-  const product = data?.product;
-  const related = relatedData?.products.edges.map((e) => e.node).filter((p) => p.handle !== handle) ?? [];
-
-  useEffect(() => {
-    if (product) {
-      setSelectedVariant(product.variants.edges[0]?.node ?? null);
-    }
-  }, [product]);
-
-  useEffect(() => {
-    if (isError && error) {
-      const msg = axios.isAxiosError(error)
-        ? (error.response?.data?.errors?.[0]?.message ?? error.message)
-        : (error as Error).message;
-      toast.error("Could not load product", { description: msg });
-    }
-  }, [isError, error]);
+  const product = getMockProduct(handle);
+  const [selectedVariantId, setSelectedVariantId] = useState(product?.variants.edges[0]?.node.id ?? "");
+  const selectedVariant = product?.variants.edges.find((edge) => edge.node.id === selectedVariantId)?.node
+    ?? product?.variants.edges[0]?.node;
+  const related = mockProducts.filter((item) => item.handle !== handle).slice(0, 4);
 
   useGSAP(
     () => {
@@ -97,8 +43,6 @@ export function ProductDetailClient({ id: handle }: { id: string }) {
   const comparePrice = product
     ? `${(parseFloat(product.compareAtPriceRange.minVariantPrice.amount) * 10).toFixed(0)} DH`
     : "";
-  const variantId = selectedVariant?.id ?? (product ? getFirstVariantId(product) : "");
-
   return (
     <div ref={container} className="min-h-screen bg-[#fdf8f8]">
       <Navbar />
@@ -123,9 +67,7 @@ export function ProductDetailClient({ id: handle }: { id: string }) {
         </Link>
       </div>
 
-      {isLoading && <DetailSkeleton />}
-
-      {isError && !isLoading && (
+      {!product && (
         <div className="flex flex-col items-center gap-4 py-32 text-center">
           <p className="text-[15px] text-[#444748]">Product not found.</p>
           <Link href="/products" className="border border-[#1c1b1b] px-8 py-3 text-[11px] tracking-widest uppercase hover:bg-[#1c1b1b] hover:text-white transition-colors">
@@ -214,7 +156,7 @@ export function ProductDetailClient({ id: handle }: { id: string }) {
                             const match = product.variants.edges.find((e) =>
                               e.node.selectedOptions.some((o) => o.name === option.name && o.value === val)
                             );
-                            if (match) setSelectedVariant(match.node);
+                            if (match) setSelectedVariantId(match.node.id);
                           }}
                           className={`cursor-pointer border px-3 py-1.5 text-[11px] tracking-wider transition-all duration-200 ${
                             selectedVariant?.selectedOptions.some((o) => o.name === option.name && o.value === val)
@@ -262,12 +204,12 @@ export function ProductDetailClient({ id: handle }: { id: string }) {
             {/* CTA */}
             <div className="flex gap-3">
               <button
-                onClick={() => variantId && addToCart.mutate({ variantId, quantity: qty })}
-                disabled={addToCart.isPending || !variantId}
+                onClick={() => toast.success("Added to bag", { description: `${qty} ${product.title} added to this showroom preview.` })}
+                disabled={!selectedVariant}
                 className="group flex flex-1 cursor-pointer items-center justify-center gap-3 bg-[#1c1b1b] py-4 text-[11px] font-medium tracking-widest uppercase text-white transition-colors hover:bg-[#e4c285] hover:text-[#1c1b1b] disabled:opacity-60"
               >
                 <ShoppingBag aria-hidden="true" className="h-4 w-4" />
-                {addToCart.isPending ? "Adding…" : "Add to Bag"}
+                Add to Bag
               </button>
               <button
                 onClick={() => {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getMockProduct } from "@/lib/mockProducts";
 import { ProductDetailClient } from "./ProductDetailClient";
 
 export async function generateMetadata({
@@ -7,13 +8,10 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  try {
-    const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-    const product = await res.json();
-    return { title: product.title, description: product.description };
-  } catch {
-    return { title: "Product" };
-  }
+  const product = getMockProduct(id);
+  return product
+    ? { title: product.title, description: product.description }
+    : { title: "Product" };
 }
 
 export default async function ProductDetailPage({

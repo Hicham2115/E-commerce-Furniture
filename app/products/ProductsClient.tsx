@@ -2,36 +2,19 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef, useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { Heart, SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/Navbar";
 import { SiteFooter } from "@/components/SiteFooter";
-import { shopifyFetch, GET_PRODUCTS, type ShopifyProductsResponse } from "@/lib/shopify";
-import { queryKeys } from "@/lib/queryKeys";
-import { getProductPrice, getProductImage, type ShopifyProduct } from "@/lib/types";
+import { mockProducts } from "@/lib/mockProducts";
+import { getProductPrice, getProductImage } from "@/lib/types";
 import { useWishlistStore } from "@/lib/wishlistStore";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const CLIP_CLASSES = ["clip-poly-1", "clip-poly-2", "clip-poly-asym", "clip-poly-1", "clip-poly-asym", "clip-poly-2"];
-
-function ProductCardSkeleton() {
-  return (
-    <div className="space-y-4">
-      <Skeleton className="aspect-3/4 w-full rounded-none bg-[#e5e2e1]" />
-      <div className="space-y-2 px-1">
-        <Skeleton className="h-3 w-1/3 bg-[#e5e2e1]" />
-        <Skeleton className="h-5 w-3/4 bg-[#e5e2e1]" />
-        <Skeleton className="h-3 w-1/4 bg-[#e5e2e1]" />
-      </div>
-    </div>
-  );
-}
 
 export function ProductsClient() {
   const container = useRef<HTMLDivElement>(null);
@@ -39,21 +22,7 @@ export function ProductsClient() {
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">("default");
   const { toggle: toggleWishlist, has: inWishlist } = useWishlistStore();
 
-  const { data, isLoading, isError, error, refetch } = useQuery<ShopifyProductsResponse>({
-    queryKey: queryKeys.products.all,
-    queryFn: () => shopifyFetch<ShopifyProductsResponse>(GET_PRODUCTS, { first: 50 }),
-  });
-
-  useEffect(() => {
-    if (isError && error) {
-      const msg = axios.isAxiosError(error)
-        ? (error.response?.data?.errors?.[0]?.message ?? error.message)
-        : (error as Error).message;
-      toast.error("Could not load products", { description: msg });
-    }
-  }, [isError, error]);
-
-  const allProducts = data?.products.edges.map((e) => e.node) ?? [];
+  const allProducts = mockProducts;
 
   // Collect unique tags as categories
   const allTags = Array.from(new Set(allProducts.flatMap((p) => p.tags)));
@@ -79,7 +48,6 @@ export function ProductsClient() {
 
   // Grid animation — reruns on filter/sort change
   useGSAP(() => {
-    if (isLoading) return;
     ScrollTrigger.refresh();
     gsap.set(".prod-card", { opacity: 0, y: 30 });
     gsap.to(".prod-card", {
@@ -87,7 +55,7 @@ export function ProductsClient() {
       clearProps: "opacity,transform",
       scrollTrigger: { trigger: ".prod-grid", start: "top 85%", once: true },
     });
-  }, { scope: container, dependencies: [filtered.length, activeCategory, sortBy, isLoading] });
+  }, { scope: container, dependencies: [filtered.length, activeCategory, sortBy] });
 
   return (
     <div ref={container} className="min-h-screen bg-[#fdf8f8]">
@@ -111,7 +79,7 @@ export function ProductsClient() {
           All Products
         </h1>
         <p className="mt-4 max-w-md text-[16px] leading-relaxed text-white/50">
-          {isLoading ? "Curated for refined living." : `${filtered.length} pieces curated for refined living.`}
+          {`${filtered.length} pieces curated for refined living.`}
         </p>
       </div>
 
@@ -147,20 +115,7 @@ export function ProductsClient() {
 
       {/* Grid */}
       <div className="prod-grid px-5 py-16 md:px-16">
-        {isError && !isLoading && (
-          <div className="flex justify-center py-20">
-            <button
-              onClick={() => refetch()}
-              className="cursor-pointer border border-[#1c1b1b] px-8 py-3 text-[11px] tracking-widest uppercase hover:bg-[#1c1b1b] hover:text-white transition-all duration-300"
-            >
-              Retry
-            </button>
-          </div>
-        )}
-
         <div className="grid grid-cols-2 gap-x-4 gap-y-14 md:grid-cols-4 md:gap-x-6">
-          {isLoading && Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
-
           {filtered.map((product, i) => {
             const wishlisted = inWishlist(product.id);
             const image = getProductImage(product) || "";
@@ -214,8 +169,7 @@ export function ProductsClient() {
             );
           })}
 
-          {/* Empty state when Shopify has no products */}
-          {!isLoading && !isError && filtered.length === 0 && (
+          {filtered.length === 0 && (
             <div className="col-span-full py-32 text-center">
               <p className="text-[15px] text-[#444748]">No products found.</p>
               {activeCategory !== "All" && (

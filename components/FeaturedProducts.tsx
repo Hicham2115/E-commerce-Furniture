@@ -2,14 +2,10 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useRef } from "react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
-import { shopifyFetch, GET_PRODUCTS, type ShopifyProductsResponse } from "@/lib/shopify";
-import { queryKeys } from "@/lib/queryKeys";
+import { mockProducts } from "@/lib/mockProducts";
 import { getProductPrice, getProductImage, type ShopifyProduct } from "@/lib/types";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -41,31 +37,19 @@ const OVERRIDES = [
   },
 ];
 
-function ProductSkeleton({ offset }: { offset: boolean }) {
-  return (
-    <div className={`space-y-6 ${offset ? "md:translate-y-12" : ""}`}>
-      <Skeleton className="aspect-3/4 w-full rounded-none bg-[#e5e2e1]" />
-      <div className="space-y-2">
-        <Skeleton className="h-3 w-3/4 bg-[#e5e2e1]" />
-        <Skeleton className="h-6 w-2/3 bg-[#e5e2e1]" />
-      </div>
-    </div>
-  );
-}
-
 function ProductCard({
-  shopify,
+  product,
   override,
 }: {
-  shopify?: ShopifyProduct;
+  product: ShopifyProduct;
   override: (typeof OVERRIDES)[0];
 }) {
-  const name = shopify?.title ?? override.name;
-  const price = shopify ? getProductPrice(shopify) : override.fallbackPrice;
-  const image = shopify ? getProductImage(shopify) || override.fallbackImage : override.fallbackImage;
+  const name = product.title;
+  const price = getProductPrice(product);
+  const image = getProductImage(product) || override.fallbackImage;
 
   return (
-    <div className={`space-y-6 group fp-card ${override.offset ? "md:translate-y-12" : ""}`}>
+    <Link href={`/products/${product.handle}`} className={`space-y-6 group fp-card block ${override.offset ? "md:translate-y-12" : ""}`}>
       <div className={`relative aspect-3/4 overflow-hidden ${override.clipClass} bg-[#f1edec]`}>
         <img
           src={image}
@@ -87,29 +71,14 @@ function ProductCard({
           ({price})
         </span>
       </div>
-    </div>
+    </Link>
   );
 }
 
 export function FeaturedProducts() {
   const container = useRef<HTMLElement>(null);
 
-  const { data, isLoading, isError, error } = useQuery<ShopifyProductsResponse>({
-    queryKey: queryKeys.products.list(3),
-    queryFn: () => shopifyFetch<ShopifyProductsResponse>(GET_PRODUCTS, { first: 3 }),
-  });
-
-  // Show toast on error
-  useEffect(() => {
-    if (isError && error) {
-      const msg = axios.isAxiosError(error)
-        ? (error.response?.data?.errors?.[0]?.message ?? error.message)
-        : (error as Error).message;
-      toast.error("Could not load products", { description: msg });
-    }
-  }, [isError, error]);
-
-  const shopifyProducts = data?.products.edges.map((e) => e.node) ?? [];
+  const featuredProducts = mockProducts.slice(0, 3);
 
   useGSAP(
     () => {
@@ -118,17 +87,15 @@ export function FeaturedProducts() {
         clearProps: "opacity,transform",
         scrollTrigger: { trigger: ".fp-header", start: "top 85%", once: true },
       });
-      if (!isLoading) {
-        ScrollTrigger.refresh();
-        gsap.set(".fp-card", { clipPath: "inset(100% 0 0 0)" });
-        gsap.to(".fp-card", {
-          clipPath: "inset(0% 0 0 0)", duration: 1.5, ease: "expo.out", stagger: 0.3,
-          clearProps: "clip-path",
-          scrollTrigger: { trigger: ".fp-grid", start: "top 80%", once: true },
-        });
-      }
+      ScrollTrigger.refresh();
+      gsap.set(".fp-card", { clipPath: "inset(100% 0 0 0)" });
+      gsap.to(".fp-card", {
+        clipPath: "inset(0% 0 0 0)", duration: 1.5, ease: "expo.out", stagger: 0.3,
+        clearProps: "clip-path",
+        scrollTrigger: { trigger: ".fp-grid", start: "top 80%", once: true },
+      });
     },
-    { scope: container, dependencies: [isLoading] },
+    { scope: container },
   );
 
   return (
@@ -144,24 +111,22 @@ export function FeaturedProducts() {
           </h2>
         </div>
         <div className="col-span-12 md:col-span-6 flex flex-col justify-end items-start md:items-end">
-          <button className="border cursor-pointer border-[#1c1b1b] px-8 py-4 flex items-center gap-4 group hover:bg-[#1c1b1b] hover:text-white transition-all duration-300 text-[12px] tracking-widest uppercase">
+          <Link href="/products" className="border cursor-pointer border-[#1c1b1b] px-8 py-4 flex items-center gap-4 group hover:bg-[#1c1b1b] hover:text-white transition-all duration-300 text-[12px] tracking-widest uppercase">
             Learn More
             <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </button>
+          </Link>
         </div>
       </div>
 
       {/* Grid */}
       <div className="fp-grid grid grid-cols-1 md:grid-cols-3 gap-12">
-        {isLoading
-          ? OVERRIDES.map((o, i) => <ProductSkeleton key={i} offset={o.offset} />)
-          : OVERRIDES.map((override, i) => (
-              <ProductCard
-                key={i}
-                override={override}
-                shopify={shopifyProducts[i]}
-              />
-            ))}
+        {featuredProducts.map((product, i) => (
+          <ProductCard
+            key={product.id}
+            override={OVERRIDES[i]}
+            product={product}
+          />
+        ))}
       </div>
     </section>
   );
